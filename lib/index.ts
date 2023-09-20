@@ -1,4 +1,12 @@
-export default function() {
-  console.log('index :>> ');
-  return 'index 2'
+import type { IControlOptions } from './types';
+
+function setup(options: IControlOptions) {
+  console.log(options);
+  // return 'index 2'
 }
+
+function MapboxDrawHistory(options: IControlOptions) {
+  setup(options);
+}
+
+export default MapboxDrawHistory;

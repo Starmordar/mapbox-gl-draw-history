@@ -23,3 +23,5 @@ map.addControl(new mapboxgl.NavigationControl(), 'top-left');
 const Draw = new MapboxDraw();
 map.addControl(Draw, 'bottom-right');
 
+import fnc from '/dist/lib/index.js'
+fnc();
