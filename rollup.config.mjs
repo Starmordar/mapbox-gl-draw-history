@@ -1,15 +1,22 @@
-import merge from 'deepmerge';
-import { createBasicConfig } from '@open-wc/building-rollup';
+import babel from '@rollup/plugin-babel';
+import terser from '@rollup/plugin-terser';
+import typescript from '@rollup/plugin-typescript';
+import resolve from '@rollup/plugin-node-resolve';
 
-const baseConfig = createSpaConfig({
-  developmentMode: process.env.ROLLUP_WATCH === 'true',
-  injectServiceWorker: false
-});
+const developmentMode = process.env.ROLLUP_WATCH === 'true';
 
-export default merge(baseConfig, {
-  input: './example/index.html'
-  // input: './out-tsc/lib/index.js',
-  // output: {
-  //     dir: 'dist',
-  // }
-});
+export default {
+  input: './src/index.ts',
+  output: {
+    name: 'MapboxDrawHistory',
+    file: 'dist/mapbox-gl-draw-history.js',
+    format: 'umd',
+  },
+  treeshake: !developmentMode,
+  plugins: [
+    typescript(),
+    resolve({ moduleDirectories: ['node_modules'] }),
+    !developmentMode ? terser() : false,
+    babel({ extensions: ['.ts'], include: ['src/**/*.ts'], babelHelpers: 'bundled' }),
+  ],
+};

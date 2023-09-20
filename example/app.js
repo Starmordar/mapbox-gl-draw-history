@@ -4,12 +4,13 @@ function getURLSearchParam(name) {
 }
 
 function getAccessToken() {
-    const accessToken = (getURLSearchParam('access_token') || localStorage.getItem('accessToken'));
-    localStorage.setItem('accessToken', accessToken);
+  const accessToken = getURLSearchParam('access_token') || localStorage.getItem('accessToken');
+  localStorage.setItem('accessToken', accessToken);
 
-    return accessToken;
+  return accessToken;
 }
 
+const mapboxgl = window.mapboxgl;
 mapboxgl.accessToken = getAccessToken();
 const map = new mapboxgl.Map({
   container: 'map',
@@ -20,8 +21,8 @@ const map = new mapboxgl.Map({
 
 map.addControl(new mapboxgl.NavigationControl(), 'top-left');
 
-const Draw = new MapboxDraw();
+const Draw = new window.MapboxDraw();
 map.addControl(Draw, 'bottom-right');
 
-import fnc from '/dist/lib/index.js'
-fnc();
+const DrawHistory = new window.MapboxDrawHistory({});
+console.log('DrawHistory :>> ', DrawHistory);

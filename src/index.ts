@@ -1,9 +1,5 @@
 import type { IControlOptions } from './types';
-
-function setup(options: IControlOptions) {
-  console.log(options);
-  // return 'index 2'
-}
+import setup from './setup';
 
 function MapboxDrawHistory(options: IControlOptions) {
   setup(options);
