@@ -22,7 +22,7 @@ const map = new mapboxgl.Map({
 map.addControl(new mapboxgl.NavigationControl(), 'top-left');
 
 const Draw = new window.MapboxDraw();
-map.addControl(Draw, 'bottom-right');
+map.addControl(Draw, 'top-right');
 
-const DrawHistory = new window.MapboxDrawHistory({});
-console.log('DrawHistory :>> ', DrawHistory);
+const DrawHistory = new window.MapboxDrawHistory();
+map.addControl(DrawHistory, 'top-right');

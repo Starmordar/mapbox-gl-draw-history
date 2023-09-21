@@ -1,6 +1,12 @@
 export type TControlNames = 'undo' | 'redo';
 
 export interface IControlOptions {
-  constrols: Record<TControlNames, boolean>;
-  keybindings: boolean;
+  constrols?: boolean;
+  keybindings?: boolean;
+}
+
+export interface IControlButtonOptions {
+  title: string;
+  className: string;
+  onActivate: () => void;
 }

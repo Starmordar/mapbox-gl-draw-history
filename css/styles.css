@@ -1,0 +1,13 @@
+.mapbox-gl-draw-undo {
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAyUlEQVR4nO3UMQ4BQRSA4b8n7iBcgmp3O+4jWrfAKYh2OQbbUdChEPoRiW1eJszY2RnF/Mmrv7zJ5EHsz5qEQlUoVIVCVShUfZkHUABzIPOFKs1sgE4IWAEXoG+Ljx3hV6BbdfNPNYAEWGjwtS0scdNGGjytgtu0FPDsF7jEbUoFXOCppoDvvuCWgG++YPnUO1/wSsBTH6ju+CR1fqZMs+lrclfIEDgYnswz0HYFnyzQHg47GqC5y03LBsBecyC279NY20eKxTDpCdOoqIxxt+JEAAAAAElFTkSuQmCC');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 70%;
+}
+
+.mapbox-gl-draw-redo {
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAzklEQVR4nO3UPQrCMBiA4XfXS/hzCh1Eu+h5xFlHj6C9g+gBFG+hnergJk7qHsmgQwiUL40JQl7o1vQhPw2k/rhlLFjFwlUsXPnEMyAHzsDL+HjVs3ABu8BRCNXG+8DdAyqCW8DNEzqXzNa2vBtgADQqxjovcWZBp4Lxzocqt8xUkvNJLgxYL68kJ1T3NOAmgXrEgouaS+3c2oC3oeCR5XeahcIPFnwHDH+95x3BPX0BJj7xngC/4rk2sI8Bf9J7uwJOlgumBMbfN1Op2L0BBTeotUG0W8wAAAAASUVORK5CYII=');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 70%;
+}
