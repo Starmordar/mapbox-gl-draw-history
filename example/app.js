@@ -23,6 +23,9 @@ map.addControl(new mapboxgl.NavigationControl(), 'top-left');
 
 const Draw = new window.MapboxDraw();
 map.addControl(Draw, 'top-right');
+console.log('Draw :>> ', Draw);
 
 const DrawHistory = new window.MapboxDrawHistory();
 map.addControl(DrawHistory, 'top-right');
+
+console.log('DrawHistory :>> ', DrawHistory.history.history);

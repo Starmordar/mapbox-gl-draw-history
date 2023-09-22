@@ -2,10 +2,12 @@ import { classes } from './constants';
 
 import type { IControl, Map } from 'mapbox-gl';
 import type { IControlButtonOptions, IControlOptions } from './types';
+import HistoryStack from './stack';
 
 export default class MapboxDrawHistory implements IControl {
   private controlGroup?: HTMLElement;
   private map?: Map;
+  private history: HistoryStack;
 
   private options: IControlOptions = {
     constrols: true,
@@ -16,6 +18,8 @@ export default class MapboxDrawHistory implements IControl {
     if (options) {
       this.options = Object.assign(this.options, options);
     }
+
+    this.history = new HistoryStack();
   }
 
   onAdd(map: Map): HTMLElement {
@@ -60,6 +64,8 @@ export default class MapboxDrawHistory implements IControl {
 
     return button;
   }
+
+  private setEventListeners() {}
 
   private undo() {
     console.log('undo');
