@@ -3,11 +3,13 @@ import { classes } from './constants';
 import type { IControl, Map } from 'mapbox-gl';
 import type { IControlButtonOptions, IControlOptions } from './types';
 import HistoryStack from './stack';
+import HistoryEvents from './events';
 
 export default class MapboxDrawHistory implements IControl {
   private controlGroup?: HTMLElement;
   private map?: Map;
-  private history: HistoryStack;
+  private history?: HistoryStack;
+  private historyEvents?: HistoryEvents;
 
   private options: IControlOptions = {
     constrols: true,
@@ -18,12 +20,13 @@ export default class MapboxDrawHistory implements IControl {
     if (options) {
       this.options = Object.assign(this.options, options);
     }
-
-    this.history = new HistoryStack();
   }
 
   onAdd(map: Map): HTMLElement {
     this.map = map;
+
+    this.initializeHistory();
+
     this.controlGroup = document.createElement('div');
     this.controlGroup.className = `${classes.CONTROL_BASE} ${classes.CONTROL_GROUP}`;
     const btns = this.createControlButtons();
@@ -38,13 +41,13 @@ export default class MapboxDrawHistory implements IControl {
     const undoBtn = this.createControlButton({
       title: 'Undo drawing',
       className: classes.CONTROL_BUTTON_UNDO,
-      onActivate: this.undo,
+      onActivate: this.history!.undo,
     });
 
     const redoBtn = this.createControlButton({
       title: 'Redo drawing',
       className: classes.CONTROL_BUTTON_REDO,
-      onActivate: this.redo,
+      onActivate: this.history!.redo,
     });
 
     return [undoBtn, redoBtn];
@@ -65,14 +68,11 @@ export default class MapboxDrawHistory implements IControl {
     return button;
   }
 
-  private setEventListeners() {}
+  private initializeHistory() {
+    this.history = new HistoryStack();
+    this.historyEvents = new HistoryEvents(this.map!, this.history);
 
-  private undo() {
-    console.log('undo');
-  }
-
-  private redo() {
-    console.log('redo');
+    this.historyEvents.setupListeners();
   }
 
   onRemove(map: Map): void {
@@ -80,5 +80,7 @@ export default class MapboxDrawHistory implements IControl {
 
     this.controlGroup.parentNode.removeChild(this.controlGroup);
     this.map = undefined;
+
+    this.historyEvents?.turnOffListeners();
   }
 }
