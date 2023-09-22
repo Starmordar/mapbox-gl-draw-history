@@ -5,6 +5,8 @@ import KeybindingEvents from './events/KeybindingEvents';
 
 import type { IControl, Map } from 'mapbox-gl';
 import type { IControlButtonOptions, IControlOptions } from './types';
+import FeaturesComparator from './FeaturesComparator';
+import * as MapboxDraw from '@mapbox/mapbox-gl-draw';
 
 export default class HistoryControl implements IControl {
   private controlGroup?: HTMLElement;
@@ -13,16 +15,19 @@ export default class HistoryControl implements IControl {
   private historyEvents?: HistoryEvents;
   private keyBindingEvents?: KeybindingEvents;
 
+  private drawControl: null | MapboxDraw = null;
+
   private options: IControlOptions = {
     constrols: true,
     keybindings: false,
     listeners: true,
   };
 
-  constructor(options?: Partial<IControlOptions>) {
+  constructor(drawControl: MapboxDraw, options?: Partial<IControlOptions>) {
     if (options) {
       this.options = Object.assign(this.options, options);
     }
+    this.drawControl = drawControl;
   }
 
   onAdd(map: Map): HTMLElement {
@@ -46,13 +51,13 @@ export default class HistoryControl implements IControl {
     const undoBtn = this.createControlButton({
       title: `Undo drawing ${this.options.keybindings ? '(Ctrl + z)' : ''}`,
       className: classes.CONTROL_BUTTON_UNDO,
-      onActivate: this.history!.undo,
+      onActivate: this.undo.bind(this),
     });
 
     const redoBtn = this.createControlButton({
       title: `Redo drawing ${this.options.keybindings ? '(Ctrl + y)' : ''}`,
       className: classes.CONTROL_BUTTON_REDO,
-      onActivate: this.history!.redo,
+      onActivate: this.redo.bind(this),
     });
 
     this.controlGroup.append(undoBtn, redoBtn);
@@ -85,6 +90,37 @@ export default class HistoryControl implements IControl {
       this.keyBindingEvents = new KeybindingEvents(this.history);
       this.keyBindingEvents.setupEvents();
     }
+  }
+
+  private redo() {
+    if (!this.history || !this.history.hasRedo) return;
+
+    this.history.redo();
+    this.applyHistoryChanges();
+  }
+
+  private undo() {
+    if (!this.history || !this.history.hasUndo) return;
+
+    this.history.undo();
+    this.applyHistoryChanges();
+  }
+
+  private applyHistoryChanges() {
+    if (!this.history) return;
+
+    const { created, updated, deleted } = FeaturesComparator.compare(
+      this.history.current,
+      this.history.previousHistory,
+    );
+
+    if (deleted.length) {
+      this.drawControl?.delete(deleted);
+    }
+
+    [...created, ...updated].forEach(feature => {
+      this.drawControl?.add(feature);
+    });
   }
 
   onRemove(map: Map): void {

@@ -25,7 +25,7 @@ const Draw = new window.MapboxDraw();
 map.addControl(Draw, 'top-right');
 // console.log('Draw :>> ', Draw);
 
-const DrawHistory = new window.MapboxDrawHistory({ keybindings: true });
+const DrawHistory = new window.MapboxDrawHistory(Draw, { keybindings: true });
 map.addControl(DrawHistory, 'top-right');
 
 // console.log('DrawHistory :>> ', DrawHistory.history.history);

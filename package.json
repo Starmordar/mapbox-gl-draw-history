@@ -43,8 +43,5 @@
     "rollup": "^3.29.2",
     "st": "^3.0.0",
     "typescript": "^5.2.2"
-  },
-  "dependencies": {
-    "immer": "^10.0.2"
   }
 }

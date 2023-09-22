@@ -1,9 +1,9 @@
-import * as MapboxDraw from '@mapbox/mapbox-gl-draw';
-
 export default class HistoryStack {
   private _historyIndex = 0;
   private _history: GeoJSON.Feature[][] = [[]];
   private _annotations: unknown[] = [];
+
+  public previousHistory: GeoJSON.Feature[] = [];
 
   constructor() {}
 
@@ -20,14 +20,22 @@ export default class HistoryStack {
   }
 
   public redo() {
-    if (this._historyIndex < this._history.length) this._historyIndex++;
+    if (this._historyIndex < this._history.length) {
+      this.previousHistory = this.current;
+      this._historyIndex++;
+    }
   }
 
   public undo() {
-    if (this._historyIndex > 0) this._historyIndex--;
+    if (this._historyIndex > 0) {
+      this.previousHistory = this.current;
+      this._historyIndex--;
+    }
   }
 
   public operation(fn: (history: GeoJSON.Feature[]) => GeoJSON.Feature[], annotation?: unknown) {
+    this.previousHistory = this.current;
+
     this._history = this._history.slice(0, this._historyIndex + 1);
     this._annotations = this._annotations.slice(0, this._historyIndex + 1);
 
