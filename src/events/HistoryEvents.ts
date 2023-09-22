@@ -1,5 +1,5 @@
 import { Map } from 'mapbox-gl';
-import HistoryStack from './stack';
+import HistoryStack from '../HistoryStack';
 
 export default class HistoryEvents {
   private _map: Map;
@@ -11,12 +11,12 @@ export default class HistoryEvents {
   }
 
   public setupListeners() {
-    this._map.on('draw.create', this.createFeature);
-    this._map.on('draw.update', this.updateFeature);
-    this._map.on('draw.delete', this.deleteFeature);
+    this._map.on('draw.create', this.createFeature.bind(this));
+    this._map.on('draw.update', this.updateFeature.bind(this));
+    this._map.on('draw.delete', this.deleteFeature.bind(this));
 
-    this._map.on('draw.combine', this.combineOrUncombineFeatures);
-    this._map.on('draw.uncombine', this.combineOrUncombineFeatures);
+    this._map.on('draw.combine', this.combineOrUncombineFeatures.bind(this));
+    this._map.on('draw.uncombine', this.combineOrUncombineFeatures.bind(this));
   }
 
   public turnOffListeners() {

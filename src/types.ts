@@ -1,6 +1,7 @@
 export type TControlNames = 'undo' | 'redo';
 
 export interface IControlOptions {
+  listeners?: boolean;
   constrols?: boolean;
   keybindings?: boolean;
 }
