@@ -1,23 +1,23 @@
-import { classes } from './constants';
 import HistoryStack from './HistoryStack';
 import HistoryEvents from './events/HistoryEvents';
 import KeybindingEvents from './events/KeybindingEvents';
+import FeaturesComparator from './FeaturesComparator';
 
 import type { IControl, Map } from 'mapbox-gl';
-import type { IControlButtonOptions, IControlOptions } from './types';
-import FeaturesComparator from './FeaturesComparator';
 import * as MapboxDraw from '@mapbox/mapbox-gl-draw';
+import type { IControlButtonOptions, IControlOptions } from './types';
 
 export default class HistoryControl implements IControl {
-  private controlGroup?: HTMLElement;
-  private map?: Map;
-  private history?: HistoryStack;
-  private historyEvents?: HistoryEvents;
-  private keyBindingEvents?: KeybindingEvents;
+  public history?: HistoryStack;
 
-  private drawControl: null | MapboxDraw = null;
+  private _controlGroup?: HTMLElement;
+  private _map?: Map;
+  private _historyEvents?: HistoryEvents;
+  private _keybindingEvents?: KeybindingEvents;
 
-  private options: IControlOptions = {
+  private _drawControl: MapboxDraw;
+
+  private _options: IControlOptions = {
     constrols: true,
     keybindings: false,
     listeners: true,
@@ -25,47 +25,71 @@ export default class HistoryControl implements IControl {
 
   constructor(drawControl: MapboxDraw, options?: Partial<IControlOptions>) {
     if (options) {
-      this.options = Object.assign(this.options, options);
+      this._options = Object.assign(this._options, options);
     }
-    this.drawControl = drawControl;
+
+    this._drawControl = drawControl;
   }
 
   onAdd(map: Map): HTMLElement {
-    this.map = map;
+    this._map = map;
+    this._controlGroup = document.createElement('div');
+    this._controlGroup.className = 'mapboxgl-ctrl mapboxgl-ctrl-group';
 
-    this.initializeHistory();
+    this.setupHistory();
 
-    this.controlGroup = document.createElement('div');
-    this.controlGroup.className = `${classes.CONTROL_BASE} ${classes.CONTROL_GROUP}`;
-
-    if (this.options.constrols) {
-      this.createControlButtons();
+    if (this._options.constrols) {
+      this.addControlButtons();
     }
 
-    return this.controlGroup;
+    return this._controlGroup;
   }
 
-  private createControlButtons() {
-    if (!this.controlGroup) return [];
+  undo() {
+    if (!this.history || !this.history.hasUndo) return;
 
-    const undoBtn = this.createControlButton({
-      title: `Undo drawing ${this.options.keybindings ? '(Ctrl + z)' : ''}`,
-      className: classes.CONTROL_BUTTON_UNDO,
+    this.history.undo();
+    this.applyHistoryChanges();
+  }
+
+  redo() {
+    if (!this.history || !this.history.hasRedo) return;
+
+    this.history.redo();
+    this.applyHistoryChanges();
+  }
+
+  onRemove(map: Map) {
+    if (!this._controlGroup || !this._controlGroup.parentNode || !this._map) return;
+
+    this._controlGroup.parentNode.removeChild(this._controlGroup);
+    this._map = undefined;
+
+    this._historyEvents?.turnOffListeners();
+    this._keybindingEvents?.turnOffEvents();
+  }
+
+  private addControlButtons() {
+    if (!this._controlGroup) return;
+
+    const undoBtn = this.createButton({
+      title: `Undo drawing ${this._options.keybindings ? '(Ctrl + Z)' : ''}`,
+      className: 'mapbox-gl-draw-undo',
       onActivate: this.undo.bind(this),
     });
 
-    const redoBtn = this.createControlButton({
-      title: `Redo drawing ${this.options.keybindings ? '(Ctrl + y)' : ''}`,
-      className: classes.CONTROL_BUTTON_REDO,
+    const redoBtn = this.createButton({
+      title: `Redo drawing ${this._options.keybindings ? '(Ctrl + Y)' : ''}`,
+      className: 'mapbox-gl-draw-redo',
       onActivate: this.redo.bind(this),
     });
 
-    this.controlGroup.append(undoBtn, redoBtn);
+    this._controlGroup.append(undoBtn, redoBtn);
   }
 
-  private createControlButton(options: IControlButtonOptions): HTMLButtonElement {
+  private createButton(options: IControlButtonOptions): HTMLButtonElement {
     const button = document.createElement('button');
-    button.className = `${classes.CONTROL_BUTTON} ${options.className}`;
+    button.className = `${options.className}`;
     button.setAttribute('title', options.title);
 
     button.addEventListener('click', evt => {
@@ -78,32 +102,18 @@ export default class HistoryControl implements IControl {
     return button;
   }
 
-  private initializeHistory() {
+  private setupHistory() {
     this.history = new HistoryStack();
 
-    if (this.options.listeners) {
-      this.historyEvents = new HistoryEvents(this.map!, this.history);
-      this.historyEvents.setupListeners();
+    if (this._options.listeners) {
+      this._historyEvents = new HistoryEvents(this._map!, this.history);
+      this._historyEvents.setupListeners();
     }
 
-    if (this.options.keybindings) {
-      this.keyBindingEvents = new KeybindingEvents(this.history);
-      this.keyBindingEvents.setupEvents();
+    if (this._options.keybindings) {
+      this._keybindingEvents = new KeybindingEvents(this.history);
+      this._keybindingEvents.setupEvents();
     }
-  }
-
-  private redo() {
-    if (!this.history || !this.history.hasRedo) return;
-
-    this.history.redo();
-    this.applyHistoryChanges();
-  }
-
-  private undo() {
-    if (!this.history || !this.history.hasUndo) return;
-
-    this.history.undo();
-    this.applyHistoryChanges();
   }
 
   private applyHistoryChanges() {
@@ -115,21 +125,11 @@ export default class HistoryControl implements IControl {
     );
 
     if (deleted.length) {
-      this.drawControl?.delete(deleted);
+      this._drawControl?.delete(deleted);
     }
 
     [...created, ...updated].forEach(feature => {
-      this.drawControl?.add(feature);
+      this._drawControl?.add(feature);
     });
-  }
-
-  onRemove(map: Map): void {
-    if (!this.controlGroup || !this.controlGroup.parentNode || !this.map) return;
-
-    this.controlGroup.parentNode.removeChild(this.controlGroup);
-    this.map = undefined;
-
-    this.historyEvents?.turnOffListeners();
-    this.keyBindingEvents?.turnOffEvents();
   }
 }

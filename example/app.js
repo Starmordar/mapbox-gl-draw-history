@@ -28,4 +28,4 @@ map.addControl(Draw, 'top-right');
 const DrawHistory = new window.MapboxDrawHistory(Draw, { keybindings: true });
 map.addControl(DrawHistory, 'top-right');
 
-// console.log('DrawHistory :>> ', DrawHistory.history.history);
+console.log('DrawHistory :>> ', DrawHistory);
