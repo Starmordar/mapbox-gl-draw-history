@@ -46,6 +46,7 @@ export default class HistoryControl implements IControl {
   }
 
   undo() {
+    console.log('update');
     if (!this.history || !this.history.hasUndo) return;
 
     this.history.undo();
@@ -111,13 +112,16 @@ export default class HistoryControl implements IControl {
     }
 
     if (this._options.keybindings) {
-      this._keybindingEvents = new KeybindingEvents(this.history);
+      this._keybindingEvents = new KeybindingEvents({
+        undo: this.undo.bind(this),
+        redo: this.redo.bind(this),
+      });
       this._keybindingEvents.setupEvents();
     }
   }
 
   private applyHistoryChanges() {
-    if (!this.history) return;
+    if (!this.history || !this._drawControl) return;
 
     const { created, updated, deleted } = FeaturesComparator.compare(
       this.history.current,
@@ -125,11 +129,11 @@ export default class HistoryControl implements IControl {
     );
 
     if (deleted.length) {
-      this._drawControl?.delete(deleted);
+      this._drawControl.delete(deleted);
     }
 
     [...created, ...updated].forEach(feature => {
-      this._drawControl?.add(feature);
+      this._drawControl.add(feature);
     });
   }
 }

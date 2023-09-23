@@ -1,19 +1,19 @@
-import HistoryStack from '../HistoryStack';
-
+type TEvents = { undo: () => void; redo: () => void };
 export default class KeybindingEvents {
   private _keysPressed: Record<string, boolean> = {};
-  private _history: HistoryStack;
 
-  constructor(history: HistoryStack) {
-    this._history = history;
+  private _events: TEvents;
+
+  constructor(events: TEvents) {
+    this._events = events;
   }
 
-  public setupEvents() {
+  setupEvents() {
     document.addEventListener('keydown', this.onKeydown.bind(this));
     document.addEventListener('keyup', this.onKeyup.bind(this));
   }
 
-  public turnOffEvents() {
+  turnOffEvents() {
     document.removeEventListener('keydown', this.onKeydown.bind(this));
     document.removeEventListener('keyup', this.onKeyup.bind(this));
   }
@@ -22,19 +22,21 @@ export default class KeybindingEvents {
     const check = key.split('+');
     const keys = Object.keys(this._keysPressed);
 
-    if (check.length === keys.length && check.every(item => keys.includes(item))) return true;
-    return false;
+    return check.length === keys.length && check.every(item => keys.includes(item));
   }
 
   private onKeydown(event: KeyboardEvent) {
     const { ctrlKey, key } = event;
 
-    if (!['Alt', 'Control', 'Shift'].includes(key)) this._keysPressed[key.toLowerCase()] = true;
+    if (!['Alt', 'Control', 'Shift'].includes(key)) {
+      this._keysPressed[key.toLowerCase()] = true;
+    }
+
     if (ctrlKey && this.hasKey('z')) {
-      this._history.hasUndo && this._history.undo();
+      this._events.undo();
     }
     if (ctrlKey && this.hasKey('y')) {
-      this._history.hasRedo && this._history.redo();
+      this._events.redo();
     }
   }
 
