@@ -65,7 +65,7 @@ export default class HistoryControl implements IControl {
     this._controlGroup.parentNode.removeChild(this._controlGroup);
     this._map = undefined;
 
-    this._historyEvents?.turnOffListeners();
+    this._historyEvents?.turnOffEvents();
     this._keybindingEvents?.turnOffEvents();
   }
 
@@ -107,7 +107,7 @@ export default class HistoryControl implements IControl {
 
     if (this._options.listeners) {
       this._historyEvents = new HistoryEvents(this._map!, this.history);
-      this._historyEvents.setupListeners();
+      this._historyEvents.setupEvents();
     }
 
     if (this._options.keybindings) {

@@ -10,57 +10,52 @@ export default class HistoryEvents {
     this._history = history;
   }
 
-  public setupListeners() {
-    this._map.on('draw.create', this.createFeature.bind(this));
-    this._map.on('draw.update', this.updateFeature.bind(this));
-    this._map.on('draw.delete', this.deleteFeature.bind(this));
+  setupEvents() {
+    this._map.on('draw.create', this.createFeatures.bind(this));
+    this._map.on('draw.update', this.updateFeatures.bind(this));
+    this._map.on('draw.delete', this.deleteFeatures.bind(this));
 
     this._map.on('draw.combine', this.combineOrUncombineFeatures.bind(this));
     this._map.on('draw.uncombine', this.combineOrUncombineFeatures.bind(this));
   }
 
-  public turnOffListeners() {
-    this._map.off('draw.create', this.createFeature);
-    this._map.off('draw.update', this.updateFeature);
-    this._map.off('draw.delete', this.deleteFeature);
+  turnOffEvents() {
+    this._map.off('draw.create', this.createFeatures.bind(this));
+    this._map.off('draw.update', this.updateFeatures.bind(this));
+    this._map.off('draw.delete', this.deleteFeatures.bind(this));
 
-    this._map.off('draw.combine', this.combineOrUncombineFeatures);
-    this._map.off('draw.uncombine', this.combineOrUncombineFeatures);
+    this._map.off('draw.combine', this.combineOrUncombineFeatures.bind(this));
+    this._map.off('draw.uncombine', this.combineOrUncombineFeatures.bind(this));
   }
 
-  private createFeature(evt: MapboxDraw.DrawCreateEvent) {
+  private createFeatures(evt: MapboxDraw.DrawCreateEvent) {
     this._history.operation(data => [...data, ...evt.features]);
   }
 
-  private updateFeature(evt: MapboxDraw.DrawUpdateEvent) {
-    this.updateFeaturesGeometry(evt.features);
+  private updateFeatures(evt: MapboxDraw.DrawUpdateEvent) {
+    this._history.operation(data =>
+      data.map(feature => {
+        const featureIndex = evt.features.findIndex(s => s.id === feature.id);
+        return featureIndex !== -1 ? evt.features[featureIndex] : feature;
+      }),
+    );
   }
 
-  private deleteFeature(evt: MapboxDraw.DrawDeleteEvent) {
+  private deleteFeatures(evt: MapboxDraw.DrawDeleteEvent) {
     const deleted = evt.features.map(feature => feature.id) as string[];
-    this.bulkUpdateShapes({ deleted });
+    this.bulkUpdateFeatures({ deleted });
   }
 
   private combineOrUncombineFeatures(evt: MapboxDraw.DrawCombineEvent) {
     const deleted = evt.deletedFeatures.map(feature => feature.id) as string[];
 
-    this.bulkUpdateShapes({ created: evt.createdFeatures, deleted });
+    this.bulkUpdateFeatures({ created: evt.createdFeatures, deleted });
   }
 
-  private bulkUpdateShapes({ created = [], deleted = [] }: { created?: GeoJSON.Feature[]; deleted?: string[] }) {
+  private bulkUpdateFeatures({ created = [], deleted = [] }: { created?: GeoJSON.Feature[]; deleted?: string[] }) {
     this._history.operation(data => [
       ...data.filter(v => typeof v.id === 'string' && !deleted.includes(v.id)),
       ...created,
     ]);
-  }
-
-  private updateFeaturesGeometry(features: GeoJSON.Feature[]) {
-    this._history.operation(data =>
-      data.map(feature => {
-        const index = features.findIndex(s => s.id === feature.id);
-
-        return index !== -1 ? { ...feature, geometry: { ...feature.geometry, ...features[index].geometry } } : feature;
-      }),
-    );
   }
 }
