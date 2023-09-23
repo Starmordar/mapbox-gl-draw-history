@@ -1,7 +1,7 @@
 import HistoryStack from './HistoryStack';
 import HistoryEvents from './events/HistoryEvents';
 import KeybindingEvents from './events/KeybindingEvents';
-import FeaturesComparator from './FeaturesComparator';
+import compareFeatures from './utils/compareFeatures';
 
 import type { IControl, Map } from 'mapbox-gl';
 import * as MapboxDraw from '@mapbox/mapbox-gl-draw';
@@ -46,7 +46,6 @@ export default class HistoryControl implements IControl {
   }
 
   undo() {
-    console.log('update');
     if (!this.history || !this.history.hasUndo) return;
 
     this.history.undo();
@@ -123,10 +122,7 @@ export default class HistoryControl implements IControl {
   private applyHistoryChanges() {
     if (!this.history || !this._drawControl) return;
 
-    const { created, updated, deleted } = FeaturesComparator.compare(
-      this.history.current,
-      this.history.previousHistory,
-    );
+    const { created, updated, deleted } = compareFeatures(this.history.current, this.history.previousHistory);
 
     if (deleted.length) {
       this._drawControl.delete(deleted);

@@ -1,4 +1,4 @@
-import setupApi from './api';
+import setupApi from './setupApi';
 
 import * as MapboxDraw from '@mapbox/mapbox-gl-draw';
 import type { IControlOptions } from './types';
