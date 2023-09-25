@@ -2,17 +2,17 @@
   "name": "mapbox-gl-draw-history",
   "version": "1.0.0",
   "description": "A history plugin for Mapbox GL Draw",
-  "main": "index.js",
+  "main": "dist/mapbox-gl-draw-history.js",
+  "style": "dist/mapbox-gl-draw-history.css",
   "peerDependencies": {
     "@mapbox/mapbox-gl-draw": "^1",
     "mapbox-gl": "^1 || ^2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rimraf dist && rollup -c",
-    "watch": "rollup -c --watch",
+    "watch-dev": "rollup -c --environment BUILD:dev --watch",
+    "build": "rimraf dist && rollup -c --environment BUILD:production,MINIFY:true",
     "start-server": "st --no-cache -H 0.0.0.0 --port 3000 --index /index.html .",
-    "start": "run-p watch start-server"
+    "start": "run-p watch-dev start-server"
   },
   "repository": {
     "type": "git",
@@ -43,5 +43,8 @@
     "rollup": "^3.29.2",
     "st": "^3.0.0",
     "typescript": "^5.2.2"
-  }
+  },
+  "files": [
+    "dist/mapbox-gl-draw-history*"
+  ]
 }
