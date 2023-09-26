@@ -1,6 +1,6 @@
 {
   "name": "mapbox-gl-draw-history",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A history plugin for Mapbox GL Draw",
   "main": "dist/mapbox-gl-draw-history.js",
   "style": "dist/mapbox-gl-draw-history.css",
