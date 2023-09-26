@@ -6,7 +6,7 @@
 
 History plugin for [mapbox-gl-draw](https://github.com/mapbox/mapbox-gl-draw).
 
-![screen-capture](https://github.com/Starmordar/mapbox-gl-draw-history/assets/31778230/eb0fdf23-4155-404c-af59-2f73e09c483f)
+![screen-capture](https://github.com/Starmordar/mapbox-gl-draw-history/assets/31778230/6974eaa8-e301-4b0f-b2eb-b34d4a8bc912)
 
 
 **Requires [mapbox-gl-js](https://github.com/mapbox/mapbox-gl-js) and [mapbox-gl-draw](https://github.com/mapbox/mapbox-gl-draw)**
