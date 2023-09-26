@@ -19,7 +19,7 @@
     "url": "git+https://github.com/Starmordar/mapbox-gl-draw-history.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Starmordar/mapbox-gl-draw-history/issues"
   },
@@ -45,6 +45,8 @@
     "typescript": "^5.2.2"
   },
   "files": [
-    "dist/mapbox-gl-draw-history*"
+    "dist/mapbox-gl-draw-history*",
+    "src/",
+    "LICENSE.md"
   ]
 }
