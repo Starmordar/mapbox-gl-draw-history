@@ -18,7 +18,15 @@
     "type": "git",
     "url": "git+https://github.com/Starmordar/mapbox-gl-draw-history.git"
   },
-  "author": "",
+  "keywords": [
+    "webgl",
+    "mapbox",
+    "draw",
+    "drawing",
+    "history",
+    "undo",
+    "redo"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Starmordar/mapbox-gl-draw-history/issues"
